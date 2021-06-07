@@ -21,10 +21,15 @@ class Clip extends CustomClipper<Path>{
   getClip(Size size) {
     print(size);
     Path path = Path()
-    ..addRRect(RRect.fromRectAndRadius(Rect.fromLTWH(10, size.height/2-120, size.width-20, 240), Radius.circular(26)));
+    ..addRRect(RRect.fromRectAndRadius(
+      Rect.fromCenter(
+        center: Offset(size.width/2, size.height/2),
+        width : size.width*0.50,
+        height: size.height*0.70),
+        Radius.circular(25)
+    ));
     return path;
   }
-
   @override
   bool shouldReclip(oldClipper) {
     // TODO: implement shouldReclip

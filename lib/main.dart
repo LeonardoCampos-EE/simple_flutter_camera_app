@@ -1,5 +1,6 @@
 import 'package:camera_simple/screens/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -8,8 +9,15 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    
     return MaterialApp(
       initialRoute: '/home',
       routes: {
@@ -25,16 +33,20 @@ class HomeScreen extends Scaffold {
   : super(
     appBar: GradientAppBar(),
     backgroundColor: Color(0xff9CECFB),
-    body: SingleChildScrollView(
+    body: Padding(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          IconButton(
+          Align(
+            alignment: Alignment.center,
+            child: IconButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/camera');
               },
-              icon: Icon(Icons.camera_alt_sharp))
+              icon: Icon(Icons.camera_alt_sharp)
+            )
+          )
         ],
       ),
       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),

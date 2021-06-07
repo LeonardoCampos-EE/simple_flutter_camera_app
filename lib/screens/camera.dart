@@ -82,10 +82,8 @@ class _CameraScreenState extends State<CameraScreen>
                   child: CameraPreview(cameraController),
                 ),
                 ClipPath(
-                  clipper: Clip(),
-                  child: AspectRatio(
-                    aspectRatio: cameraController.value.aspectRatio, // This creates a distortion in the feed image
-                    child: CameraPreview(cameraController)),
+                    clipper: Clip(),
+                    child: CameraPreview(cameraController)// AspectRatio(aspectRatio: cameraController.value.aspectRatio, child: CameraPreview(cameraController))
                 )
               ],
             )));
@@ -170,7 +168,7 @@ class _CameraScreenState extends State<CameraScreen>
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeLeft
     ]);
 
     availableCameras().then((value) {

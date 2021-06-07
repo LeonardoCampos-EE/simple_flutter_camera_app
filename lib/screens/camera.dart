@@ -1,10 +1,13 @@
 import 'package:camera_simple/screens/preview.dart';
+import 'package:camera_simple/screens/painter.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:flutter/services.dart';
 
 import 'dart:io';
 
@@ -19,6 +22,7 @@ class _CameraScreenState extends State<CameraScreen>
   List<CameraDescription> _cameras = [];
   int _selectedCameraIndex = 0;
   String imgPath = "";
+  GuidelinesPainter guidelinesPainter = GuidelinesPainter();
 
   Future initCamera(CameraDescription cameraDescription) async {
     if (_cameraController != null) {
@@ -49,6 +53,11 @@ class _CameraScreenState extends State<CameraScreen>
   void dispose() {
     _cameraController?.dispose();
     super.dispose();
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
   }
 
   /// Display camera preview
@@ -66,7 +75,20 @@ class _CameraScreenState extends State<CameraScreen>
     return MaterialApp(
         home: Padding(
             padding: EdgeInsets.all(5.0),
-            child: CameraPreview(cameraController)));
+            child: Stack(
+              children: <Widget>[
+                CustomPaint(
+                  foregroundPainter: guidelinesPainter,
+                  child: CameraPreview(cameraController),
+                ),
+                ClipPath(
+                  clipper: Clip(),
+                  child: AspectRatio(
+                    aspectRatio: cameraController.value.aspectRatio, // This creates a distortion in the feed image
+                    child: CameraPreview(cameraController)),
+                )
+              ],
+            )));
   }
 
   Widget cameraControl(context) {
@@ -128,7 +150,7 @@ class _CameraScreenState extends State<CameraScreen>
       final String filePath = '$dirPath/$name.jpeg';
 
       await _cameraController?.takePicture().then((file) {
-        print(filePath);
+        print(file.path);
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -145,6 +167,12 @@ class _CameraScreenState extends State<CameraScreen>
   @override
   void initState() {
     super.initState();
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+    ]);
+
     availableCameras().then((value) {
       _cameras = value;
       if (_cameras.length > 0) {
@@ -162,6 +190,7 @@ class _CameraScreenState extends State<CameraScreen>
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(

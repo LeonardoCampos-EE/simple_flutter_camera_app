@@ -4,12 +4,16 @@ import 'dart:typed_data';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
+import 'package:flutter/rendering.dart';
+import 'package:image/image.dart' as Img;
 
 class PreviewScreen extends StatefulWidget {
   final String imgPath;
   final String fileName;
+  final Map<String, int> rect;
 
-  PreviewScreen(this.imgPath, this.fileName);
+  PreviewScreen(this.imgPath, this.fileName, this.rect);
 
   @override
   _PreviewScreenState createState() => _PreviewScreenState();
@@ -65,7 +69,22 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   Future getBytes() async {
     Uint8List bytes = File(widget.imgPath).readAsBytesSync() as Uint8List;
-//    print(ByteData.view(buffer))
     return ByteData.view(bytes.buffer);
   }
+
+  Future cropSquare(String srcFilePath, String destFilePath, Map<String, int> rect) async {
+    var bytes = await File(srcFilePath).readAsBytes();
+    Img.Image src = Img.decodeImage(bytes);
+
+    var cropSize = min(src.width, src.height);
+    int offsetX = (src.width - min(src.width, src.height)) ~/ 2;
+    int offsetY = (src.height - min(src.width, src.height)) ~/ 2;
+
+    Img.Image destImage =
+      Img.copyCrop(src, offsetX, offsetY, cropSize, cropSize);
+
+    var jpg = Img.encodeJpg(destImage);
+    await File(destFilePath).writeAsBytes(jpg);
+  }
 }
+

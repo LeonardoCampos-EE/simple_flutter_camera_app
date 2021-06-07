@@ -18,6 +18,8 @@ dependencies:
   esys_flutter_share: ^1.0.2
   path: ^1.6.4
   path_provider: ^1.6.11
+  image: ^2.1.4
+  flutter_modular:
 
 dev_dependencies:
   mobx_codegen:

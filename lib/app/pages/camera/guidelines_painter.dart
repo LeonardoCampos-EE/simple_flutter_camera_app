@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
@@ -25,7 +24,8 @@ class Clip extends CustomClipper<Path>{
       Rect.fromCenter(
         center: Offset(size.width/2, size.height/2),
         width : size.width*0.50,
-        height: size.height*0.70),
+        height: size.height*0.70
+      ),
         Radius.circular(25)
     ));
     return path;

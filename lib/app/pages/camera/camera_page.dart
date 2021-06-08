@@ -1,18 +1,23 @@
-import 'package:camera_simple/app/pages/camera/preview_screen.dart';
-import 'package:camera_simple/app/pages/camera/guidelines_painter.dart';
+// Modular imports
 import 'package:camera_simple/app/pages/camera/camera_controller.dart';
+import 'package:camera_simple/app/pages/picture/picture_controller.dart';
+import 'package:camera_simple/app/pages/camera/guidelines_painter.dart';
+import 'package:camera_simple/app/pages/picture/picture_page.dart';
 
+// Dart imports
+import 'dart:io';
+
+// Flutter imports
 import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'package:camera/camera.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:flutter/services.dart';
-import 'dart:io';
-
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:mobx/mobx.dart';
 
 final cameraPageController = CameraPageController();
 
@@ -21,12 +26,10 @@ class CameraPage extends StatefulWidget {
   _CameraPageState createState() => _CameraPageState();
 }
 
-class _CameraPageState extends State<CameraPage>
-    with WidgetsBindingObserver {
-  // Class properties
+class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
+  final cameraPageController = Modular.get<CameraPageController>();
+  final pictureController = Modular.get<PictureController>();
   CameraController? _cameraController;
-  List<CameraDescription> _cameras = [];
-  GuidelinesPainter guidelinesPainter = GuidelinesPainter();
 
   // Initialize camera
   Future initCamera(CameraDescription cameraDescription) async {
@@ -35,9 +38,14 @@ class _CameraPageState extends State<CameraPage>
       await _cameraController?.dispose();
     }
 
+    CameraDescription _cameraDescription = CameraDescription(
+        name: cameraDescription.name,
+        lensDirection: cameraDescription.lensDirection,
+        sensorOrientation: 270);
+
     // Start camera controller
     _cameraController =
-        CameraController(cameraDescription, ResolutionPreset.max);
+        CameraController(_cameraDescription, ResolutionPreset.max);
 
     // Initialize camera if the device is connected
     _cameraController?.addListener(() {
@@ -45,6 +53,7 @@ class _CameraPageState extends State<CameraPage>
         setState(() {});
       }
     });
+
     try {
       await _cameraController?.initialize();
     } catch (e) {
@@ -59,18 +68,17 @@ class _CameraPageState extends State<CameraPage>
   void initState() {
     super.initState();
 
-    // Force landscape orientation
-    SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
-
     availableCameras().then((value) {
-      _cameras = value;
-      if (_cameras.length > 0) {
+      cameraPageController.cameras = value;
+
+      print(
+          "Number of initialized cameras: ${cameraPageController.cameras.length}");
+
+      if (cameraPageController.cameras.length > 0) {
         cameraPageController.selectedCameraIndex = 0;
-        // setState(() {
-        //   _selectedCameraIndex = 0;
-        // });
-        initCamera(_cameras[cameraPageController.selectedCameraIndex])
+
+        initCamera(cameraPageController
+                .cameras[cameraPageController.selectedCameraIndex])
             .then((value) {});
       } else {
         print('No camera available');
@@ -131,11 +139,7 @@ class _CameraPageState extends State<CameraPage>
     final CameraController? cameraController = _cameraController;
 
     if (cameraController == null || !cameraController.value.isInitialized) {
-      return Text(
-        'Loading',
-        style: TextStyle(
-            color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold),
-      );
+      return Center(child: CircularProgressIndicator());
     }
 
     return MaterialApp(
@@ -144,7 +148,7 @@ class _CameraPageState extends State<CameraPage>
             child: Stack(
               children: <Widget>[
                 CustomPaint(
-                  foregroundPainter: guidelinesPainter,
+                  foregroundPainter: cameraPageController.guidelinesPainter,
                   child: CameraPreview(cameraController),
                 ),
                 ClipPath(
@@ -183,8 +187,13 @@ class _CameraPageState extends State<CameraPage>
 
   /// Widget to switch between front and back cameras
   Widget cameraToggle() {
+
+    if (cameraPageController.cameras.length <= 0){
+      return Center(child: CircularProgressIndicator());
+    }
+
     CameraDescription selectedCamera =
-        _cameras[cameraPageController.selectedCameraIndex];
+        cameraPageController.cameras[cameraPageController.selectedCameraIndex];
     CameraLensDirection lensDirection = selectedCamera.lensDirection;
 
     return Expanded(
@@ -210,28 +219,13 @@ class _CameraPageState extends State<CameraPage>
 
   onCapture(context) async {
     try {
-      // final p = await getApplicationDocumentsDirectory();
-      // final dirPath = "${p.path}/media";
-      // await Directory(dirPath).create(recursive: true);
-      // final String filePath = '$dirPath/$name.jpeg';
-
-      final name = DateTime.now();
-
-      final rect = {
-        "top": cameraPageController.top,
-        "left": cameraPageController.left,
-        "width": cameraPageController.width,
-        "height": cameraPageController.height
-      };
+      pictureController.fileName = DateTime.now().toString();
 
       await _cameraController?.takePicture().then((file) {
         print(file.path);
-        cameraPageController.imagePath = file.path;
+        pictureController.imagePath = file.path;
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => PreviewScreen(
-                    cameraPageController.imagePath, "$name.jpeg", rect)));
+            context, MaterialPageRoute(builder: (context) => PicturePage()));
       });
     } catch (e) {
       print('Error $e \nError message: $e');
@@ -253,11 +247,12 @@ class _CameraPageState extends State<CameraPage>
 
   onSwitchCamera() {
     cameraPageController.selectedCameraIndex =
-        cameraPageController.selectedCameraIndex < _cameras.length - 1
+        cameraPageController.selectedCameraIndex <
+                cameraPageController.cameras.length - 1
             ? cameraPageController.selectedCameraIndex + 1
             : 0;
     CameraDescription selectedCamera =
-        _cameras[cameraPageController.selectedCameraIndex];
+        cameraPageController.cameras[cameraPageController.selectedCameraIndex];
     initCamera(selectedCamera);
   }
 }

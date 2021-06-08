@@ -12,13 +12,13 @@ mixin _$PictureController on _PictureController, Store {
   final _$topAtom = Atom(name: '_PictureController.top');
 
   @override
-  int get top {
+  double get top {
     _$topAtom.reportRead();
     return super.top;
   }
 
   @override
-  set top(int value) {
+  set top(double value) {
     _$topAtom.reportWrite(value, super.top, () {
       super.top = value;
     });
@@ -27,13 +27,13 @@ mixin _$PictureController on _PictureController, Store {
   final _$leftAtom = Atom(name: '_PictureController.left');
 
   @override
-  int get left {
+  double get left {
     _$leftAtom.reportRead();
     return super.left;
   }
 
   @override
-  set left(int value) {
+  set left(double value) {
     _$leftAtom.reportWrite(value, super.left, () {
       super.left = value;
     });
@@ -42,13 +42,13 @@ mixin _$PictureController on _PictureController, Store {
   final _$widthAtom = Atom(name: '_PictureController.width');
 
   @override
-  int get width {
+  double get width {
     _$widthAtom.reportRead();
     return super.width;
   }
 
   @override
-  set width(int value) {
+  set width(double value) {
     _$widthAtom.reportWrite(value, super.width, () {
       super.width = value;
     });
@@ -57,13 +57,13 @@ mixin _$PictureController on _PictureController, Store {
   final _$heightAtom = Atom(name: '_PictureController.height');
 
   @override
-  int get height {
+  double get height {
     _$heightAtom.reportRead();
     return super.height;
   }
 
   @override
-  set height(int value) {
+  set height(double value) {
     _$heightAtom.reportWrite(value, super.height, () {
       super.height = value;
     });
@@ -104,6 +104,21 @@ mixin _$PictureController on _PictureController, Store {
   @override
   Future<dynamic> getBytes() {
     return _$getBytesAsyncAction.run(() => super.getBytes());
+  }
+
+  final _$fixRotationAsyncAction =
+      AsyncAction('_PictureController.fixRotation');
+
+  @override
+  Future<dynamic> fixRotation() {
+    return _$fixRotationAsyncAction.run(() => super.fixRotation());
+  }
+
+  final _$cropImageAsyncAction = AsyncAction('_PictureController.cropImage');
+
+  @override
+  Future<dynamic> cropImage() {
+    return _$cropImageAsyncAction.run(() => super.cropImage());
   }
 
   @override

@@ -103,7 +103,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Color(0xff293B5F),
       body: Container(
         child: Stack(
           children: <Widget>[
@@ -144,7 +144,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
     return MaterialApp(
         home: Padding(
-            padding: EdgeInsets.all(5.0),
+            padding: EdgeInsets.all(25.0),
             child: Stack(
               children: <Widget>[
                 CustomPaint(
@@ -187,8 +187,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
   /// Widget to switch between front and back cameras
   Widget cameraToggle() {
-
-    if (cameraPageController.cameras.length <= 0){
+    if (cameraPageController.cameras.length <= 0) {
       return Center(child: CircularProgressIndicator());
     }
 
@@ -224,9 +223,12 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       await _cameraController?.takePicture().then((file) {
         print(file.path);
         pictureController.imagePath = file.path;
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => PicturePage()));
       });
+
+      await pictureController.cropImage();
+      await pictureController.fixRotation();
+
+      Navigator.pushNamed(context, '/picture');
     } catch (e) {
       print('Error $e \nError message: $e');
     }

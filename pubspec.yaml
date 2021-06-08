@@ -20,6 +20,7 @@ dependencies:
   path_provider: ^1.6.11
   image: ^2.1.4
   flutter_modular:
+  exif:
 
 dev_dependencies:
   mobx_codegen:

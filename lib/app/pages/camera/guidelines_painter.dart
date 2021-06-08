@@ -1,6 +1,15 @@
+// Dart imports
+import 'dart:ui' as ui;
+
+// Flutter imports
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
+
+// Modular imports
+import 'package:camera_simple/app/pages/picture/picture_controller.dart';
+
+final pictureController = Modular.get<PictureController>();
 
 class GuidelinesPainter extends CustomPainter {
   @override
@@ -15,26 +24,31 @@ class GuidelinesPainter extends CustomPainter {
   }
 }
 
-class Clip extends CustomClipper<Path>{
+class Clip extends CustomClipper<Path> {
   @override
   getClip(Size size) {
-    print(size);
+    // Origin on Top Left portrait / Bottom Left landscape
+    double left = ((size.width / 2) - (size.width * 0.25));
+    double top = ((size.height / 2) - (size.height * 0.175));
+    double width = (size.width / 2);
+    double height = (size.height / 2);
+
+    print("Size: $size");
     Path path = Path()
-    ..addRRect(RRect.fromRectAndRadius(
-      Rect.fromCenter(
-        center: Offset(size.width/2, size.height/2),
-        width : size.width*0.50,
-        height: size.height*0.70
-      ),
-        Radius.circular(25)
-    ));
+      ..addRRect(RRect.fromRectAndRadius(
+          Rect.fromLTWH(left, top, width, height), Radius.circular(25)));
+
+    pictureController.left = (left/size.width);
+    pictureController.top = (top/size.height);
+    pictureController.width = (width/size.width);
+    pictureController.height = (height/size.height);
+
     return path;
   }
+
   @override
   bool shouldReclip(oldClipper) {
     // TODO: implement shouldReclip
     return true;
   }
 }
-
-

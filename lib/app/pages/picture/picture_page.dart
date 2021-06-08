@@ -23,6 +23,7 @@ class _PicturePageState extends State<PicturePage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: true,
@@ -35,7 +36,7 @@ class _PicturePageState extends State<PicturePage> {
                 flex: 2,
                 child: Image.file(
                   File(pictureController.imagePath),
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 ),
               ),
               Align(
@@ -53,7 +54,7 @@ class _PicturePageState extends State<PicturePage> {
                       onPressed: () {
                         pictureController.getBytes().then((bytes) {
                           Share.file(
-                            'Share via', pictureController.fileName,
+                            'Share via', pictureController.imagePath,
                             bytes.buffer.asUint8List(), 'image/path'
                           );
                         });

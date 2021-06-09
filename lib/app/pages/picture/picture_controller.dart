@@ -48,20 +48,13 @@ abstract class _PictureController with Store {
     // We'll use the exif package to read exif data
     // This is map of several exif properties
     // Let's check 'Image Orientation'
-    // final exifData = await readExifFromBytes(imageBytes);
+    final exifData = await readExifFromBytes(imageBytes);
+
+    for (String key in exifData.keys) {
+      print("$key (${exifData[key]!.tagType}): ${exifData[key]}");
+    }
 
     img.Image fixedImage = img.copyRotate(originalImage, -90);
-
-    // if (height < width) {
-    //   // rotate
-    //   if (exifData['Image Orientation']!.printable.contains('Horizontal')) {
-    //     fixedImage = img.copyRotate(originalImage, 90);
-    //   } else if (exifData['Image Orientation']!.printable.contains('180')) {
-    //     fixedImage = img.copyRotate(originalImage, -90);
-    //   } else {
-    //     fixedImage = img.copyRotate(originalImage, 0);
-    //   }
-    // }
 
     // Here you can select whether you'd like to save it as png
     // or jpg with some compression
@@ -81,14 +74,12 @@ abstract class _PictureController with Store {
     final imageWidth = originalImage.width;
     final imageHeight = originalImage.height;
 
-    img.Image croppedImage =
-        img.copyCrop(
-          originalImage, 
-          (left*1.25*imageWidth).round(), 
-          (top*0.75*imageHeight).round(),
-          (width*imageWidth).round(), 
-          (height*imageHeight).round()
-        );
+    img.Image croppedImage = img.copyCrop(
+        originalImage,
+        (left * 1.25 * imageWidth).round(),
+        (top * 0.75 * imageHeight).round(),
+        (width * imageWidth).round(),
+        (height * imageHeight).round());
 
     // Here you can select whether you'd like to save it as png
     // or jpg with some compression

@@ -22,6 +22,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.13"
+  arcore_flutter_plugin:
+    dependency: "direct main"
+    description:
+      path: "/home/leonardo/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/arcore_flutter_plugin-0.0.11/"
+      relative: false
+    source: path
+    version: "0.0.11"
   args:
     dependency: transitive
     description:
@@ -204,6 +211,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.10.0-nullsafety.2"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.6"
   esys_flutter_share:
     dependency: "direct main"
     description:

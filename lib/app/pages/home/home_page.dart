@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -28,7 +29,14 @@ class HomeScreen extends Scaffold {
                           onPressed: () {
                             Navigator.pushNamed(context, '/camera');
                           },
-                          icon: Icon(Icons.camera_alt_sharp)))
+                          icon: Icon(Icons.camera_alt_sharp))),
+                  Align(
+                      alignment: Alignment.center,
+                      child: IconButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/ar');
+                          },
+                          icon: Icon(CupertinoIcons.camera_circle)))
                 ],
               ),
               padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
